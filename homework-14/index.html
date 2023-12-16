@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible"
+          content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    function getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    const randomInt = getRandomIntInclusive(0, 10);
+
+    let inputString = prompt(`Enter a random sentence:`);
+
+    let inputId = +prompt(`Enter your ID as an integer:`);
+
+    let index;
+
+    if (inputId === 1) {
+           index = +prompt(`Index the character to get its unicode:`);
+        if (index >= 0 && index <= inputString.length) {
+           let unicodeSymbol = inputString.charCodeAt(index);
+           console.log(unicodeSymbol);
+       }
+    } else if (inputId === 2) {
+        index = +prompt(`Enter symbol index for delete him in string:`);
+        if (index >= 0 && index <= inputString.length) {
+            let deleteSymbolOfString = inputString.substring(0, index) + inputString.substring(index + 1);
+            console.log(deleteSymbolOfString);
+        }
+    } else if (inputId === 3) {
+        index = +prompt(`Enter the character index to get a random emoticon in its place:`);
+        if (index >= 0 && index <= inputString.length) {
+            let emoticon = [`😘`,`😊`,`😂`,`🤣`,`❤`,`😍`,`😒`,`👌`,`💕`,`😁`];
+            let randomEmoticon = emoticon[randomInt % emoticon.length];
+            let randomEmoticonInString = inputString.substring(0, index) + randomEmoticon + inputString.substring(index +1);
+            console.log(randomEmoticonInString);
+        }
+    } else if (inputId === 4) {
+        let lengthNoSpaces = inputString.replace(/\s/g, "").length;
+        console.log(`Your text have length in ${lengthNoSpaces} symbol!`);
+    }
+
+</script>
+</body>
+</html>
