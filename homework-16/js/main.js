@@ -29,6 +29,7 @@ class ListItem {
                 isDone: this.isDone,
                 important: this.important,
             });
+            localStorage.setItem('importantList', JSON.stringify(importantArray));
         } else {
             listArray.push({
                 type: this.type,
@@ -38,6 +39,7 @@ class ListItem {
                 deadline: this.deadline,
                 isDone: this.isDone,
             });
+            localStorage.setItem('list', JSON.stringify(listArray));
         }
 
         this.renderItem();
@@ -45,16 +47,21 @@ class ListItem {
         console.log(importantArray);
         console.log(listArray);
         counter++;
-
     };
 
     startEditItem(target) {
         // Знайти елемент для зміни
         let item = target.closest('.list-item');
         // Отримати дані елемента
-        let itemInArray = listArray.find(
-            (todo) => +todo.listId === +item.getAttribute('data-id')
-        );
+        let itemInArray;
+        if (importantCheckbox.checked) {
+            itemInArray = importantArray.find(
+                (todo) => +todo.listId === +item.getAttribute('data-id'));
+        } else {
+            itemInArray = listArray.find(
+                (todo) => +todo.listId === +item.getAttribute('data-id')
+            );
+        }
         // Ввести нові дані
         let date = new Date(itemInArray.deadline);
 
@@ -74,11 +81,20 @@ class ListItem {
     removeItem(target) {
         let item = target.closest('.list-item');
         item.remove();
-        let itemIndex = listArray.findIndex(
-            (todo) => +todo.listId === +item.getAttribute('data-id')
-        );
+        let itemIndex;
+        if (importantCheckbox.checked) {
+            itemIndex = importantArray.findIndex(
+                (todo) => +todo.listId === +item.getAttribute('data-id')
+            );
+            importantArray.splice(itemIndex, 1);
+            localStorage.setItem('importantList', JSON.stringify(importantArray));
+        } else {
+            itemIndex = listArray.findIndex(
+                (todo) => +todo.listId === +item.getAttribute('data-id')
+            );
         listArray.splice(itemIndex, 1);
         localStorage.setItem('list', JSON.stringify(listArray));
+        }
     }
 
     renderItem() {
@@ -122,13 +138,39 @@ class ListItem {
     doneItem(target) {
         let item = target.closest('.list-item');
         item.classList.toggle('--done');
-        let itemInArray = listArray.find(
-            (todo) => +todo.listId === +item.getAttribute('data-id')
-        );
-        itemInArray.isDone = !itemInArray.isDone;
+        let itemInArray
+            if (importantCheckbox.checked) {
+                itemInArray = importantArray.find(
+                (todo) => +todo.listId === +item.getAttribute('data-id')
+            );
+                itemInArray.isDone = !itemInArray.isDone;
 
-        console.log(listArray);
-        localStorage.setItem('list', JSON.stringify(listArray));
+                console.log(importantArray);
+                localStorage.setItem('importantList', JSON.stringify(importantArray));
+            } else {
+                itemInArray = listArray.find(
+                    (todo) => +todo.listId === +item.getAttribute('data-id')
+                );
+                itemInArray.isDone = !itemInArray.isDone;
+
+                console.log(listArray);
+                localStorage.setItem('list', JSON.stringify(listArray));
+            }
+    }
+
+    updateListItemsClass() {
+        const listItems = document.querySelectorAll('.list-item');
+
+        listItems.forEach(item => {
+            const listId = +item.getAttribute('data-id');
+            const isImportant = importantArray.some(todo => todo.listId === listId && todo.important);
+
+            if (isImportant) {
+                item.classList.add('--important');
+            } else {
+                item.classList.remove('--important');
+            }
+        });
     }
 
     createBtn(btnClass, btnIcon, callback) {
@@ -224,7 +266,7 @@ createForm.onsubmit = function (event) {
             }
             item.addItem();
 
-            if (!importantCheckbox) {
+            if (!importantCheckbox.checked) {
                 localStorage.setItem('list', JSON.stringify(listArray));
             }
         }
@@ -235,9 +277,22 @@ createForm.onsubmit = function (event) {
     }
 }
 
-
-
-if (JSON.parse(localStorage.getItem('list'))?.length) {
+if (importantCheckbox.checked) {
+    if (JSON.parse(localStorage.getItem('importantList'))?.length) {
+        JSON.parse(localStorage.getItem('importantList')).forEach(item => {
+            let newItem;
+            if (item.type === 'task') {
+                newItem = new Task(item.name, item.desc, item.deadline, item.isDone)
+            } else if (item.type === 'purchase') {
+                newItem = new Purchase(item.name, item.desc, item.deadline, item.isDone)
+            }
+            newItem.addItem()
+        });
+    } else {
+        localStorage.setItem('importantList', JSON.stringify(importantArray))
+    }
+} else {
+    if (JSON.parse(localStorage.getItem('list'))?.length) {
     JSON.parse(localStorage.getItem('list')).forEach(item => {
         let newItem;
         if (item.type === 'task') {
@@ -249,7 +304,8 @@ if (JSON.parse(localStorage.getItem('list'))?.length) {
     });
 } else {
     localStorage.setItem('list', JSON.stringify(listArray))
-}
+}}
+
 
 /* Services */
 function formatNumber(num) {
