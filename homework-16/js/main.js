@@ -158,21 +158,6 @@ class ListItem {
             }
     }
 
-    updateListItemsClass() {
-        const listItems = document.querySelectorAll('.list-item');
-
-        listItems.forEach(item => {
-            const listId = +item.getAttribute('data-id');
-            const isImportant = importantArray.some(todo => todo.listId === listId && todo.important);
-
-            if (isImportant) {
-                item.classList.add('--important');
-            } else {
-                item.classList.remove('--important');
-            }
-        });
-    }
-
     createBtn(btnClass, btnIcon, callback) {
         let btn = document.createElement('button');
         btn.classList.add('list-item__btn', btnClass);
@@ -191,25 +176,25 @@ class ListItem {
 
 /* modules/Task.js */
 class Task extends ListItem {
-    constructor(name, desc, deadline, isDone, assignee) {
-        super('task', name, desc, deadline, isDone);
+    constructor(name, desc, deadline, isDone, important, assignee) {
+        super('task', name, desc, deadline, isDone, important);
         this.assignee = assignee
     };
 }
 
 /* modules/Purchase.js */
 class Purchase extends ListItem {
-    constructor(name, desc, deadline, isDone, quantity) {
-        super('purchase', name, desc, deadline, isDone);
+    constructor(name, desc, deadline, isDone, important, quantity) {
+        super('purchase', name, desc, deadline, isDone, important);
         this.quantity = quantity
     };
 }
 
-class Important extends ListItem {
-    constructor(name, desc, deadline, isDone, important) {
-        super(`important`, name, desc, deadline, isDone);
-    };
-}
+// class Important extends ListItem {
+//     constructor(name, desc, deadline, isDone, important) {
+//         super(`important`, name, desc, deadline, isDone);
+//     };
+// }
 
 createForm.onsubmit = function (event) {
     event.preventDefault();
@@ -237,6 +222,7 @@ createForm.onsubmit = function (event) {
                     desc: inputs.desc.value,
                     deadline: inputs.deadline.value,
                     type: inputs.type.value,
+
                 };
                 localStorage.setItem('importantList', JSON.stringify(importantArray));
             } else {
@@ -259,10 +245,10 @@ createForm.onsubmit = function (event) {
                 behavior: 'smooth'
             });
         } else {
-            if (inputs.type.value === 'task') {
-                item = new Task(inputs.name.value, inputs.desc.value, inputs.deadline.value, false);
-            } else if (inputs.type.value === 'purchase') {
-                item = new Purchase(inputs.name.value, inputs.desc.value, inputs.deadline.value, false);
+            if (inputs.type.value === 'task' && !importantCheckbox.checked) {
+                item = new Task(inputs.name.value, inputs.desc.value, inputs.deadline.value, false, false);
+            } else if (inputs.type.value === 'purchase'  && !importantCheckbox.checked) {
+                item = new Purchase(inputs.name.value, inputs.desc.value, inputs.deadline.value, false, false);
             }
             item.addItem();
 
