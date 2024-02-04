@@ -17,7 +17,6 @@ class ListItem {
         this.isDone = isDone
         this.important = important
     };
-
     addItem() {
         if (importantCheckbox.checked) {
             importantArray.push ({
@@ -29,7 +28,18 @@ class ListItem {
                 isDone: this.isDone,
                 important: this.important,
             });
+            listArray.push({
+                type: this.type,
+                name: this.name,
+                desc: this.desc,
+                listId: this.listId,
+                deadline: this.deadline,
+                isDone: this.isDone,
+                important: this.important,
+            });
             localStorage.setItem('importantList', JSON.stringify(importantArray));
+            localStorage.setItem('list', JSON.stringify(listArray));
+
         } else {
             listArray.push({
                 type: this.type,
@@ -92,12 +102,13 @@ class ListItem {
             itemIndex = listArray.findIndex(
                 (todo) => +todo.listId === +item.getAttribute('data-id')
             );
-        listArray.splice(itemIndex, 1);
-        localStorage.setItem('list', JSON.stringify(listArray));
+            listArray.splice(itemIndex, 1);
+            localStorage.setItem('list', JSON.stringify(listArray));
         }
     }
 
     renderItem() {
+        console.log('Rendering item:', this.name);
         let newSection = document.createElement('section');
         newSection.classList.add('list-item');
         newSection.setAttribute('data-id', this.listId);
@@ -106,7 +117,7 @@ class ListItem {
             newSection.classList.add('--done')
         }
         if (this.important) {
-            newSection.classList.add (`--important`)
+            newSection.classList.add(`--important`)
         }
 
         let content = document.createElement('div');
@@ -131,31 +142,31 @@ class ListItem {
         newSection.appendChild(this.createBtn('list-item__mark', 'done', this.doneItem));
         newSection.appendChild(this.createBtn('list-item__edit', 'edit', this.startEditItem));
         newSection.appendChild(this.createBtn('list-item__remove', 'delete', this.removeItem));
+        console.log('Adding to DOM:', newSection);
 
         List.appendChild(newSection);
     }
-
     doneItem(target) {
         let item = target.closest('.list-item');
         item.classList.toggle('--done');
         let itemInArray
-            if (importantCheckbox.checked) {
-                itemInArray = importantArray.find(
+        if (importantCheckbox.checked) {
+            itemInArray = importantArray.find(
                 (todo) => +todo.listId === +item.getAttribute('data-id')
             );
-                itemInArray.isDone = !itemInArray.isDone;
+            itemInArray.isDone = !itemInArray.isDone;
 
-                console.log(importantArray);
-                localStorage.setItem('importantList', JSON.stringify(importantArray));
-            } else {
-                itemInArray = listArray.find(
-                    (todo) => +todo.listId === +item.getAttribute('data-id')
-                );
-                itemInArray.isDone = !itemInArray.isDone;
+            console.log(importantArray);
+            localStorage.setItem('importantList', JSON.stringify(importantArray));
+        } else {
+            itemInArray = listArray.find(
+                (todo) => +todo.listId === +item.getAttribute('data-id')
+            );
+            itemInArray.isDone = !itemInArray.isDone;
 
-                console.log(listArray);
-                localStorage.setItem('list', JSON.stringify(listArray));
-            }
+            console.log(listArray);
+            localStorage.setItem('list', JSON.stringify(listArray));
+        }
     }
 
     createBtn(btnClass, btnIcon, callback) {
@@ -190,12 +201,6 @@ class Purchase extends ListItem {
     };
 }
 
-// class Important extends ListItem {
-//     constructor(name, desc, deadline, isDone, important) {
-//         super(`important`, name, desc, deadline, isDone);
-//     };
-// }
-
 createForm.onsubmit = function (event) {
     event.preventDefault();
     const inputs = event.target.elements;
@@ -222,9 +227,18 @@ createForm.onsubmit = function (event) {
                     desc: inputs.desc.value,
                     deadline: inputs.deadline.value,
                     type: inputs.type.value,
-
                 };
                 localStorage.setItem('importantList', JSON.stringify(importantArray));
+                indexToUpdate = listArray.findIndex((item) => +item.listId === editIndex);
+                // Оновити старі дані в масиві listArray
+                listArray[indexToUpdate] = {
+                    ...listArray[editIndex],
+                    name: inputs.name.value,
+                    desc: inputs.desc.value,
+                    deadline: inputs.deadline.value,
+                    type: inputs.type.value,
+                };
+                localStorage.setItem('list', JSON.stringify(listArray));
             } else {
                 indexToUpdate = listArray.findIndex((item) => +item.listId === editIndex);
                 // Оновити старі дані в масиві listArray
@@ -245,10 +259,10 @@ createForm.onsubmit = function (event) {
                 behavior: 'smooth'
             });
         } else {
-            if (inputs.type.value === 'task' && !importantCheckbox.checked) {
-                item = new Task(inputs.name.value, inputs.desc.value, inputs.deadline.value, false, false);
-            } else if (inputs.type.value === 'purchase'  && !importantCheckbox.checked) {
-                item = new Purchase(inputs.name.value, inputs.desc.value, inputs.deadline.value, false, false);
+            if (inputs.type.value === 'task') {
+                item = new Task(inputs.name.value, inputs.desc.value, inputs.deadline.value, false, importantCheckbox.checked);
+            } else if (inputs.type.value === 'purchase') {
+                item = new Purchase(inputs.name.value, inputs.desc.value, inputs.deadline.value, false, importantCheckbox.checked );
             }
             item.addItem();
 
@@ -263,35 +277,46 @@ createForm.onsubmit = function (event) {
     }
 }
 
-if (importantCheckbox.checked) {
-    if (JSON.parse(localStorage.getItem('importantList'))?.length) {
-        JSON.parse(localStorage.getItem('importantList')).forEach(item => {
-            let newItem;
-            if (item.type === 'task') {
-                newItem = new Task(item.name, item.desc, item.deadline, item.isDone)
-            } else if (item.type === 'purchase') {
-                newItem = new Purchase(item.name, item.desc, item.deadline, item.isDone)
-            }
-            newItem.addItem()
-        });
-    } else {
-        localStorage.setItem('importantList', JSON.stringify(importantArray))
-    }
-} else {
-    if (JSON.parse(localStorage.getItem('list'))?.length) {
-    JSON.parse(localStorage.getItem('list')).forEach(item => {
-        let newItem;
-        if (item.type === 'task') {
-            newItem = new Task(item.name, item.desc, item.deadline, item.isDone)
-        } else if (item.type === 'purchase') {
-            newItem = new Purchase(item.name, item.desc, item.deadline, item.isDone)
-        }
-        newItem.addItem()
-    });
-} else {
-    localStorage.setItem('list', JSON.stringify(listArray))
-}}
 
+
+function saveAndRestoreData() {
+    if (importantCheckbox.checked) {
+        if (JSON.parse(localStorage.getItem('importantList'))?.length) {
+            JSON.parse(localStorage.getItem('importantList')).forEach(item => {
+                let newItem;
+                if (item.type === 'task' && importantCheckbox.checked) {
+                    newItem = new Task(item.name, item.desc, item.deadline, item.isDone);
+                } else if (item.type === 'purchase' && importantCheckbox.checked) {
+                    newItem = new Purchase(item.name, item.desc, item.deadline, item.isDone);
+                }
+                newItem.addItem();
+            });
+        } else {
+            localStorage.setItem('importantList', JSON.stringify(importantArray));
+        }
+    } else {
+        if (JSON.parse(localStorage.getItem('list'))?.length) {
+            JSON.parse(localStorage.getItem('list')).forEach(item => {
+                let newItem;
+                if (item.type === 'task') {
+                    newItem = new Task(item.name, item.desc, item.deadline, item.isDone);
+                } else if (item.type === 'purchase') {
+                    newItem = new Purchase(item.name, item.desc, item.deadline, item.isDone);
+                }
+                newItem.addItem();
+            });
+        } else {
+            localStorage.setItem('list', JSON.stringify(listArray));
+        }
+    }
+}
+window.addEventListener('unload', () => {
+    console.log('Unload event triggered');
+});
+document.addEventListener('DOMContentLoaded', () => {
+    saveAndRestoreData();
+
+});
 
 /* Services */
 function formatNumber(num) {
