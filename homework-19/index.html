@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <title>MovieFinder</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          rel="stylesheet"/>
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
+
+    <link href="css/style.css" rel="stylesheet">
+
+</head>
+<body>
+
+<header class="center">
+    <a href="index.html">
+        Movie Finder
+    </a>
+</header>
+
+<form class="center form" name="searchMovieForm">
+    <input class="form__input" name="query" placeholder="Enter movie title" type="text">
+    <button class="form__btn">
+        <span class="material-symbols-outlined">
+            search
+        </span>
+    </button>
+</form>
+
+<main class="center main">
+    <section class="search-results">
+        <h1>
+            Search results for: <span class="query"></span>
+        </h1>
+    </section>
+    <aside class="sidebar">
+        <div class="chat">
+            <div class="chat__messages">
+
+            </div>
+
+            <form class="chat__form">
+                <input class="chat__input" name="msg" placeholder="enter your message" type="text">
+                <button class="chat__btn">
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                </button>
+            </form>
+            <button class="chat__exit">left chat</button>
+        </div>
+    </aside>
+</main>
+
+
+<ol id="selectable">
+    <li class="ui-state-default">1</li>
+    <li class="ui-state-default">2</li>
+    <li class="ui-state-default">3</li>
+    <li class="ui-state-default">4</li>
+    <li class="ui-state-default">5</li>
+    <li class="ui-state-default">6</li>
+    <li class="ui-state-default">7</li>
+    <li class="ui-state-default">8</li>
+    <li class="ui-state-default">9</li>
+    <li class="ui-state-default">10</li>
+    <li class="ui-state-default">11</li>
+    <li class="ui-state-default">12</li>
+</ol>
+
+
+<script src="js/main.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+<script src="js/chat.js"></script>
+</body>
+</html>
