@@ -6,7 +6,6 @@ let chatSocket = new WebSocket(wsUri)
 
 chatSocket.onopen = function (event) {
     chat.append(showMsg('socket is open', 'open'))
-
     // chat.innerHTML += showMsg('socket is open', 'open')
 }
 chatSocket.onclose = function (event) {
@@ -44,3 +43,4 @@ function showMsg(msg, type) {
 
 
 $( "#selectable" ).selectable();
+

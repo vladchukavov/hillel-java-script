@@ -5,6 +5,9 @@
           'GRAD' 0,
           'opsz' 24
 }
+body {
+  background-color: dimgrey;
+}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -27,8 +30,7 @@ img {
 
 .main {
   display: grid;
-  grid-template-columns: 1fr 220px;
-
+  grid-template-columns: 1fr 1fr 1fr;
 }
 .sidebar {
   padding-left: 20px;
@@ -37,6 +39,7 @@ img {
 .chat {
   &__form {
     display: flex;
+
 
   }
   &__input {
@@ -63,4 +66,8 @@ img {
   &--outcome {
     background: cadetblue;
   }
+}
+.last_search {
+  grid-column: 2 / 3 ;
+  grid-row: 1/2;
 }
