@@ -7,9 +7,12 @@ webSocket.onmessage = function (event) {
     console.log(lastSearch(movieInput))
     lastSearchMovie.innerHTML = lastSearch(movieInput);
 }
+document.querySelector(`.last_search`).addEventListener(`submit`, function (event){
+    event.preventDefault()
+    webSocket.send(event.target.elements.text.value)
+})
 
 function lastSearch(text) {
     return `<span class="now-search">Now search: ${text}</span>`;
 }
-console.log(document.querySelector('.last_search__movie'));
-console.log(document.querySelector('.form__input'));
+
