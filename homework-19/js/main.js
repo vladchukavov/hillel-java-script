@@ -2,6 +2,9 @@ const BASE_URL = 'http://www.omdbapi.com/?apikey=21eac196&'
 const searchMovieForm = document.forms.searchMovieForm
 const queryField = document.querySelector('#query')
 const results = document.querySelector('.search-results')
+const lastSearchMovie = document.querySelector('.last_search__movie');
+const webSocketMovie = `wss://socketsbay.com/wss/v2/1/b6bef236013782e8f64b66fb70c2e603/`
+let webSocket = new WebSocket(webSocketMovie)
 let loading = false
 async function searchMovie(query) {
     loading = true
@@ -42,7 +45,7 @@ function renderSearchItem(item) {
     return wrap
 }
 
-searchMovieForm.addEventListener('submit', function () {
+searchMovieForm.addEventListener('submit', function (event) {
     event.preventDefault()
     if(event.target.elements.query.value.length > 2) {
         searchMovie(event.target.elements.query.value)
@@ -60,3 +63,17 @@ document.addEventListener('scroll', function () {
         console.log('start request')
    }
 })
+
+webSocket.onmessage = function (event) {
+    const movieInput = event.data
+    lastSearchMovie.innerHTML += lastSearch(movieInput)
+}
+document.querySelector(`.last_search__movie`).addEventListener(`submit`, function (event){
+    event.preventDefault()
+    webSocket.send(event.target.elements.text.value)
+})
+
+function lastSearch(text) {
+    return `<li class="last-search-item"><span class="now-search">Now search: ${text}</span></li>`
+}
+

@@ -24,15 +24,9 @@ document.querySelector('.chat__exit').onclick = function () {
 
 $('.chat__form').on('submit', function(event) {
     event.preventDefault()
-    let userName = localStorage.getItem('userName')
-    if(!userName) {
-        userName = prompt('Enter your name')
-    } else {
-        localStorage.setItem('userName', userName)
-        chatSocket.send(userName+": " + event.target.elements.msg.value)
-        chat.append(showMsg("You:" + event.target.elements.msg.value, 'outcome'))
+        chatSocket.send( event.target.elements.msg.value)
+        chat.append(showMsg(event.target.elements.msg.value, 'outcome'))
         event.target.reset()
-    }
 })
 
 function showMsg(msg, type) {
@@ -43,4 +37,5 @@ function showMsg(msg, type) {
 
 
 $( "#selectable" ).selectable();
+
 
