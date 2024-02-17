@@ -58,10 +58,10 @@ document.addEventListener('scroll', function () {
     let mainHeight = document.querySelector('.search-results').clientHeight
 
     if(document.querySelector('.search-results').getBoundingClientRect().bottom - 100 < window.innerHeight && !loading) {
-       // searchMovie(query)
+        // searchMovie(query)
         loading = true
         console.log('start request')
-   }
+    }
 })
 
 webSocket.onmessage = function (event) {
@@ -77,4 +77,3 @@ function lastSearch(text) {
     console.log(`hello`);
     return `<li class="last-search__item"><span class="now-search">Now search: ${text}</span></li>`
 }
-
