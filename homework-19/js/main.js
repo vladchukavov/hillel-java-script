@@ -68,7 +68,7 @@ webSocket.onmessage = function (event) {
     const movieInput = event.data
     lastSearchMovie.innerHTML += lastSearch(movieInput)
 }
-document.querySelector(`.last-search__movie`).addEventListener(`submit`, function (event){
+document.querySelector(`.form`).addEventListener(`submit`, function (event){
     event.preventDefault()
     webSocket.send(event.target.elements.text.value)
 })
